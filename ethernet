@@ -49,12 +49,12 @@ void loop() {
   // put your main code here, to run repeatedly:
 if( gas > 450)
 {
-  digitalWrite(buzzer_pin,LOW);
+  digitalWrite(buzzer_pin,HIGH);
   delay(500);
 }
 else
 {
-  digitalWrite(buzzer_pin,HIGH);
+  digitalWrite(buzzer_pin,LOW);
   delay(500);
 } 
 }
