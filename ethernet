@@ -1,0 +1,60 @@
+
+#include <Ethernet.h>
+#include <EthernetClient.h>
+#include <EthernetServer.h>
+#include <SPI.h>
+EthernetClient client;
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED }; //physical mac address
+byte ip[] = {192,168,1,105}; // ip in lan
+byte smtp[] = {90,80,226,85};
+int sensor=A0;
+int gas;
+int buzzer_pin=9;
+
+void setup() {
+  pinMode(buzzer_pin, OUTPUT);
+  pinMode(sensor,INPUT);
+  Ethernet.begin(mac, ip);
+  Serial.begin(9600); 
+  delay(1000);
+  Serial.println("baglaniyor...");
+  if (client.connect(smtp,25)) {
+  Serial.println("baglandi");
+  client.println("EHLO kltan");
+  client.println("AUTH LOGIN"); //see "http://base64-encoder-online.waraxe.us/" sitesini kullanarak encode edebilirsiniz
+  client.println("aGF5YWxpbm90QGhvdG1haWwuY29t"); //Type mail@adresiniz.com encode edilmiş hali
+  client.println("RGRhbm90ZWxsMTIz"); //Password kısmınıda encode etmelisiniz
+  client.println("MAIL FROM:"); //Karşı tarafta gözükmesini iztediğiniz adres
+  client.println("RCPT TO:"); //Mailin gideceği adres
+  client.println("DATA");
+  client.println("from:hayalinot@hotmail.com");
+  client.println("to:htcbtkn15@gmail.com");
+  client.println("Konu: Arduino Ethernet shild test mail");
+  client.println();
+  client.println("Mesajınızın ilk satırı.");
+  client.println("Mesajınızın ikinci satırı.");
+  client.println(".");
+  client.println(".");
+  client.println("QUIT");
+  } else {
+  Serial.println("Baglanti hatasi");
+  }
+
+  // put your setup code here, to run once:
+}
+
+void loop() {
+  gas = analogRead(sensor);
+  Serial.println(gas);
+  // put your main code here, to run repeatedly:
+if( gas > 450)
+{
+  digitalWrite(buzzer_pin,LOW);
+  delay(500);
+}
+else
+{
+  digitalWrite(buzzer_pin,HIGH);
+  delay(500);
+} 
+}
